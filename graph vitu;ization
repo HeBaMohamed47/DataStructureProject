@@ -1,0 +1,23 @@
+import networkx as nx
+import pylab as plt
+G=nx.Graph()
+
+f=open("projectinput.txt", "r")
+take = lambda: map(int, f.readline().split())
+node_sizes = []
+n,m=take() 
+for i in range(n):
+    node_sizes.append(0)
+for i in range(m):
+    u,v,w= take()
+    node_sizes[u] += 300
+    
+    node_sizes[v] += 300
+    G.add_edge(u,v, weight= w)
+pos=nx.circular_layout(G)
+
+nx.draw(G, pos,node_size = node_sizes, with_labels = True)
+labels = nx.get_edge_attributes(G,'weight')
+nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)    
+plt.savefig("graph.png") # save as png
+plt.show() # display
