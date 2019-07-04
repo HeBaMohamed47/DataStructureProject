@@ -1,0 +1,21 @@
+#include <bits/stdc++.h>
+ 
+#define mp make_pair
+ 
+using namespace std;
+const int MAX = 1e6 + 9;
+vector<vector<pair<int,int> > > g(MAX, vector<pair<int,int> >());
+int n, m, u, v, w;
+ 
+int main(){
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < m; i++){
+        scanf("%d%d%d", &u, &v, &w);
+        g[u].push_back(mp(v, w));
+        g[v].push_back(mp(u, w));
+    }
+    for(int i = 0; i < n; i++){
+        printf("%d\n", g[i].size());
+    }
+ 
+}
