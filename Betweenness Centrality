@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+ 
+#define mp make_pair
+ 
+ 
+using namespace std;
+const int MAX = 1e2 + 9;
+vector<vector<pair<int,int> > > g(MAX, vector<pair<int,int> >());
+int n, m, u, v, w;
+int minCost[109][109];
+long long numOfS[109][109];
+double betweeness[109];
+double dijkstra(int start){
+    for(int i = 0; i < 109; i++){
+        minCost[start][i] = 1e9;
+    }
+    numOfS[start][start] = 1;
+    minCost[start][start] = 0;
+    priority_queue<pair<int,int> > q;
+    q.push(mp(minCost[start][start], start));
+    while(!q.empty()){
+        int node = q.top().second;
+        int cost = q.top().first * -1;
+        q.pop();
+        for(int i = 0; i < g[node].size(); i++){
+            if(cost + g[node][i].second == minCost[start][g[node][i].first]){
+                numOfS[start][g[node][i].first] += numOfS[start][node];
+            }
+            if(cost + g[node][i].second < minCost[start][g[node][i].first]){
+                numOfS[start][g[node][i].first] = numOfS[start][node];
+                minCost[start][g[node][i].first] = cost + g[node][i].second;
+                q.push(mp((cost + g[node][i].second) * -1, g[node][i].first));
+            }
+        }
+    }
+    double res = 0;
+    for(int i = 0; i < n; i++){
+        if(i == start)continue;
+        res += minCost[start][i];
+    }
+    return (n - 1) / res;
+}
+ 
+int main(){
+    scanf("%d%d", &n, &m);
+    for(int i = 0; i < m; i++){
+        scanf("%d%d%d", &u, &v, &w);
+        g[u].push_back(mp(v, w));
+        g[v].push_back(mp(u, w));
+    }
+    for(int i = 0; i < n; i++){
+       dijkstra(i);
+    }
+    for(int v = 0; v < n; v++){
+        double res = 0;
+        for(int i = 0; i < n; i++){
+            for(int j = i + 1; j < n; j++){
+                if(i == v || j == v)continue;
+                if(minCost[i][v] + minCost[v][j] != minCost[i][j])continue;
+                res += (numOfS[i][v] * numOfS[v][j])/(numOfS[i][j] * 1.0);
+          //      printf("%d %d %lld\n", i, j, numOfS[i][j]);
+            }
+        }
+        printf("%.12f\n", res);
+    }
+ 
+}
